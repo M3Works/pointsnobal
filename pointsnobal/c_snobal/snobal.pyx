@@ -1,7 +1,5 @@
 """
 Wrapper functions to the C function in libsnobal
-
-20161010 Scott Havens
 """
 import cython
 from cython.parallel import prange, parallel
@@ -131,7 +129,7 @@ cdef extern from "envphys.h":
 #         double melt_sum;
 #         double ro_pred_sum;
 
-cdef extern from "pysnobal.h":
+cdef extern from "pointsnobal.h":
     #cdef int call_snobal(int N, int nthreads, int first_step, TSTEP_REC tstep_info[4], OUTPUT_REC** output_rec, INPUT_REC_ARR* input1, INPUT_REC_ARR* input2, PARAMS params, OUTPUT_REC_ARR* output1);
     cdef int call_snobal(int N, int nthreads, int first_step, TSTEP_REC tstep_info[4], INPUT_REC_ARR* input1, INPUT_REC_ARR* input2, PARAMS params, OUTPUT_REC_ARR* output1);
 
@@ -827,8 +825,6 @@ def call_grid():
 
     Out:
         weights changed in place
-
-    20160222 Scott Havens
     '''
 
 #     cdef int nsta, ngrid

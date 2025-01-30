@@ -219,7 +219,7 @@ def run_model(
 
     # Get the initial inputs
     input1 = get_timestep_force(df_inputs, model_datetimes[0])
-    LOG.debug('starting PySnobal time series loop')
+    LOG.debug('starting pointsnobal time series loop')
     j = 1
     # Iterate through the rest of the timesteps to run snobal
     for tstep in model_datetimes[1:]:
@@ -239,7 +239,7 @@ def run_model(
             nthreads=1)
 
         if rt != -1:
-            raise ValueError(f'pysnobal error on time step {tstep}')
+            raise ValueError(f'pointsnobal error on time step {tstep}')
 
         # copy the second inputs to now be the starting inputs
         input1 = copy.deepcopy(input2)

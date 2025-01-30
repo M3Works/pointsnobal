@@ -6,9 +6,9 @@ Installation
 
 At the command line::
 
-    $ easy_install pysnobal
+    $ easy_install pointsnobal
 
 Or, if you have virtualenvwrapper installed::
 
-    $ mkvirtualenv pysnobal
-    $ pip install pysnobal
+    $ mkvirtualenv pointsnobal
+    $ pip install pointsnobal

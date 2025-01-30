@@ -9,7 +9,7 @@
 #include <omp.h>
 #include "snobal.h"
 #include "envphys.h"
-#include "pysnobal.h"
+#include "pointsnobal.h"
 
 int call_snobal (
 		int N,
