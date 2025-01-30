@@ -55,8 +55,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Python Snobal'
-copyright = u'2016, Scott Havens'
+project = u'pointsnobal'
+copyright = u'2025, M3 Works'
 
 # The version info for the project you're documenting, acts as replacement
 # for |version| and |release|, also used in various other places throughout
@@ -209,8 +209,8 @@ latex_elements = {
 # [howto/manual]).
 latex_documents = [
     ('index', 'pointsnobal.tex',
-     u'Python Snobal Documentation',
-     u'Scott Havens', 'manual'),
+     u'pointsnobal Documentation',
+     u'M3 Works', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at
@@ -241,7 +241,7 @@ latex_documents = [
 man_pages = [
     ('index', 'pointsnobal',
      u'Python Snobal Documentation',
-     [u'Scott Havens'], 1)
+     [u'M3 Works'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -256,7 +256,6 @@ man_pages = [
 texinfo_documents = [
     ('index', 'pointsnobal',
      u'Python Snobal Documentation',
-     u'Scott Havens',
      'pointsnobal',
      'One line description of project.',
      'Miscellaneous'),
