@@ -1,4 +1,4 @@
-# from pysnobal import lib
+# from pointsnobal import lib
 # import lib
-# import ipysnobal
+# import ipointsnobal
 from . import snobal

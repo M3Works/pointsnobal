@@ -67,7 +67,7 @@ extensions = [
 
 setup(
     name='pointsnobal',
-    version='0.2.0',
+    version='0.1.0',
     description="Python wrapper of the Snobal mass and "
                 "energy balance snow model",
     long_description=readme + '\n\n' + history,

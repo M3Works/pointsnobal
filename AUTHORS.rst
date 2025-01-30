@@ -5,10 +5,11 @@ Credits
 Development Lead
 ----------------
 
-* Scott Havens <scott.havens@ars.usda.gov>
+* M3 Works LLC <info@m3works.io>
 
 Contributors
 ------------
-* Micah Sandusky <micah.sandusky@ars.usda.gov>
+* Micah Sandusky <micah.sandusky@m3works.io>
+* Scott Havens <scott.havens@ars.usda.gov>
 
 

@@ -2,18 +2,18 @@
 # -*- coding: utf-8 -*-
 
 """
-test_pysnobal
+test_pointsnobal
 ----------------------------------
 
-Tests for `pysnobal` module.
+Tests for `pointsnobal` module.
 """
 
 import unittest
 
-from pysnobal import pysnobal
+from pointsnobal import pointsnobal
 
 
-class TestPysnobal(unittest.TestCase):
+class Testpointsnobal(unittest.TestCase):
 
     def setUp(self):
         pass

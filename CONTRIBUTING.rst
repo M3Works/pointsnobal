@@ -15,7 +15,7 @@ Types of Contributions
 Report Bugs
 ~~~~~~~~~~~
 
-Report bugs at https://github.com/scotthavens/pysnobal/issues.
+Report bugs at https://github.com/m3works/pointsnobal/issues.
 
 If you are reporting a bug, please include:
 
