@@ -18,11 +18,12 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
-    # TODO: put package requirements here
+    "Cython>=0.29.32,<1.0",
+    "numpy>=1.25.2,<2.0"""
 ]
 
 test_requirements = [
-    # TODO: put package test requirements here
+    "pytest"
 ]
 
 # make sure we're using GCC
