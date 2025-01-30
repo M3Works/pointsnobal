@@ -17,12 +17,6 @@ with open('README.md') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = [
-    "Cython>=0.29.32,<1.0",
-    "numpy>=1.25.2,<2.0",
-    "pandas>=1.0,<2.0",
-]
-
 test_requirements = [
     "pytest"
 ]
@@ -77,7 +71,6 @@ setup(
     url='https://github.com/m3works/pointsnobal',
     packages=find_packages(exclude=["tests"]),
     include_package_data=True,
-    install_requires=requirements,
     license="BSD license",
     zip_safe=False,
     keywords='pointsnobal',
@@ -94,6 +87,11 @@ setup(
     tests_require=test_requirements,
     cmdclass={
         'build_ext': build_ext
+    },
+    entry_points={
+        'console_scripts': [
+            'make_snow=pointsnobal.cli:main'
+        ],
     },
     ext_modules=extensions,
 )
