@@ -10,7 +10,7 @@ import logging
 import numpy as np
 import pandas as pd
 
-from pysnobal.c_snobal import snobal
+from .c_snobal import snobal
 
 
 LOG = logging.getLogger(__name__)
@@ -36,6 +36,7 @@ EM_OUT = {'net_rad': 'R_n_bar', 'sensible_heat': 'H_bar',
           'snowmelt': 'melt_sum', 'SWI': 'ro_pred_sum',
           'cold_content': 'cc_s'}
 
+# Map of output variables for snowpack state
 SNOW_OUT = {'thickness': 'z_s', 'snow_density': 'rho',
             'specific_mass': 'm_s', 'liquid_water': 'h2o',
             'temp_surf': 'T_s_0', 'temp_lower': 'T_s_l',
@@ -47,7 +48,6 @@ def initialize_model(
         model_datetimes: pd.DatetimeIndex, elevation: float,
 ):
     """
-
     Args:
         model_datetimes: datetime index from the forcing data
         elevation: elevation in meters
@@ -199,7 +199,7 @@ def run_model(
     Returns:
         Dataframe of daily outputs indexed on datetime
     """
-    # Returns '6H'
+    # Returns '=1H'
     frequency = pd.infer_freq(df_inputs.index)
     # Variable for storing the outputs
     output_list = []

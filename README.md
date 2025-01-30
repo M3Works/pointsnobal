@@ -1,6 +1,13 @@
 # PointSnobal
 
-Python implementation of the Snobal model applied at either a point
+Python implementation of the Snobal model applied at a point. 
+
+The code in `pointsnobal/c_snobal` is the same underlying algorithms described
+in [A spatially distributed energy balance snowmelt model for application in mountain basins (Marks 1999)]( https://doi.org/10.1002/(SICI)1099-1085(199909)13:12/13<1935::AID-HYP868>3.0.CO;2-C),
+which details iSnobal. This code was originally available in IPW. 
+
+This software takes in a csv of HOURLY input data and writes a csv of daily snowpack
+data.
 
 ## Input files
 
@@ -17,8 +24,7 @@ These variables are directly used within iSnobal
  * `net_solar` - net solar into the snowpack
  * `thermal` - net longwave radiation into the snowpack
 
-You will need to calculate these using the methods outlined in SMRF 
-after you have applied the new canopy radiation model
+See `./tests/data/inputs_csl_2023.csv` for an example of data format
 
 ## Height settings for **snobal**
  * wind height: 5m
@@ -32,13 +38,54 @@ after you have applied the new canopy radiation model
     model results will be poor
 
 ## PointSnobal script
+The entrypoint is `make_snow` once installed.
+Example:
+```bash
+make_snow <path to input file> <elevation in meters>
+```
 
-
-### Script usage
-
+## Install
 
 ### Requirements
-Requirements can be found in `setup.py`
+Requirements can be found in `requirements.txt`
+**NOTE** - GCC is required
+
+For local build: 
+Create a virtual environment to isolate the code
+```bash
+pip install -r requirements.txt
+python3 setup.py build_ext --inplace
+```
+
+### Install issues on mac
+If you're getting `'omp.h' file not found` on `setup.py install`
+
+This can fix that issue
+
+```shell
+export CC=/usr/local/bin/gcc-14
+```
+for M1 or M2 mac this would be
+```shell
+export CC=/opt/homebrew/bin/gcc-14
+```
+This was *after* `brew install gcc` to get a version with openmp
+On M2 mac I also had to run `brew install libomp`
+
+Then I had the error `ld: library not found for -lomp` which I fixed with
+```
+export LDFLAGS="-L/usr/local/opt/libomp/lib"
+```
+
+for M1 and M2 this would be
+```shell
+export LDFLAGS="-L/opt/hombrew/Cellar/libomp/lib"
+```
+or
+```shell
+export LDFLAGS="-L/opt/homebrew/opt/libomp/lib"
+```
+depending on the path. You can find that path with `brew info libomp`
 
 ## Validation data
 Using [metloom](https://github.com/M3Works/metloom) for station data that

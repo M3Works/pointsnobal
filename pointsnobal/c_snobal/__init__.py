@@ -1,4 +1,1 @@
-# from pointsnobal import lib
-# import lib
-# import ipointsnobal
-from . import snobal
+from pointsnobal.c_snobal import snobal
