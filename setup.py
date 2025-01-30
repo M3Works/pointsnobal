@@ -19,7 +19,8 @@ with open('HISTORY.rst') as history_file:
 
 requirements = [
     "Cython>=0.29.32,<1.0",
-    "numpy>=1.25.2,<2.0"""
+    "numpy>=1.25.2,<2.0",
+    "pandas>=1.0,<2.0",
 ]
 
 test_requirements = [
