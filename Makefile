@@ -57,7 +57,7 @@ isort: ## using isort to sort imports
 	isort -rc -vb .
 
 lint: ## check style with flake8
-	flake8 pysnobal tests
+	flake8 pointsnobal tests
 
 test: ## run tests quickly with the default Python
 	python setup.py test
@@ -66,15 +66,15 @@ test-all: ## run tests on every Python version with tox
 	tox
 
 coverage: ## check code coverage quickly with the default Python
-	coverage run --source pysnobal setup.py test
+	coverage run --source pointsnobal setup.py test
 	coverage report -m
 	coverage html
 	$(BROWSER) htmlcov/index.html
 
 docs: ## generate Sphinx HTML documentation, including API docs
-	rm -f docs/pysnobal.rst
+	rm -f docs/pointsnobal.rst
 	rm -f docs/modules.rst
-	sphinx-apidoc -o docs/ pysnobal
+	sphinx-apidoc -o docs/ pointsnobal
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	$(BROWSER) docs/_build/html/index.html
