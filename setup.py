@@ -11,8 +11,8 @@ from setuptools import setup, find_packages, Extension
 # from distutils.extension import Extension
 from Cython.Distutils import build_ext
 
-with open('README.md') as readme_file:
-    readme = readme_file.read()
+with open("README.md", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
 
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
@@ -20,6 +20,9 @@ with open('HISTORY.rst') as history_file:
 test_requirements = [
     "pytest"
 ]
+
+with open("./requirements.txt") as f:
+    requirements = f.read().splitlines()
 
 # make sure we're using GCC
 if "CC" not in os.environ:
@@ -65,10 +68,13 @@ setup(
     version='0.1.0',
     description="Python wrapper of the Snobal mass and "
                 "energy balance snow model",
-    long_description=readme + '\n\n' + history,
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     author="M3 Works",
     author_email='info@m3works.io',
     url='https://github.com/m3works/pointsnobal',
+    install_requires=requirements,
+    setup_requires=requirements,
     packages=find_packages(exclude=["tests"]),
     include_package_data=True,
     license="BSD license",

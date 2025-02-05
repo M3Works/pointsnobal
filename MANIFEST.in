@@ -3,6 +3,9 @@ include CONTRIBUTING.rst
 include HISTORY.rst
 include LICENSE
 include README.rst
+include requirements.txt
+include pointsnobal/c_snobal/*
+recursive-include include pointsnobal/c_snobal *
 
 recursive-include tests *
 recursive-exclude * __pycache__

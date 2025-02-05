@@ -1,6 +1,6 @@
 # PointSnobal
 
-Python implementation of the Snobal model applied at a point. 
+Python wrapped implementation of the Snobal model applied at a point. 
 
 The code in `pointsnobal/c_snobal` is the same underlying algorithms described
 in [A spatially distributed energy balance snowmelt model for application in mountain basins (Marks 1999)]( https://doi.org/10.1002/(SICI)1099-1085(199909)13:12/13<1935::AID-HYP868>3.0.CO;2-C),
