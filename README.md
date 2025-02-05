@@ -77,7 +77,7 @@ Run `python3 scripts/use_api.py --help` for a full list of options.
 ## Input files
 
 ### Variables that inform **snobal**
-These variables are directly used within iSnobal
+These variables are directly used within snobal
  * `air_temp` - modeled air temp at 2m above ground
  * `percent_snow` - % mix of snow vs rain (1 == all snow) [decimal percent]
  * `precip` - precipitation mass [mm]
