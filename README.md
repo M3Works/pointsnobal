@@ -9,20 +9,93 @@ which details iSnobal. This code was originally available in IPW.
 This software takes in a csv of HOURLY input data and writes a csv of daily snowpack
 data.
 
+## Research API
+🚀 Calling Snow Researchers & Students! 🚀
+
+At M3 Works, we’re passionate about advancing scientific research and education! 🌍📊
+
+That’s why we offer free access to our PointSnobal API for qualifying
+research and educational projects. Whether you’re modeling snow processes
+or exploring hydrology, we’re here to support your work!
+
+🔑 Request an API key on our website -> [https://m3works.io/contact](https://m3works.io/contact)
+
+Let’s collaborate and push the boundaries of environmental modeling together! ❄️📡
+
+### Disclaimer
+This API is provided under the same license listed in this directory. The API
+and code are provided “as is”, and M3 Works LLC makes no guarantees of functionality, performance, or fitness for any particular purpose.
+
+M3 Works LLC shall not be held liable for any direct, indirect, incidental, or consequential damages arising from the use or inability to use this API or its associated code.
+
+Use of this API constitutes acceptance of the terms and conditions outlined in the accompanying license.
+
+### API usage
+Example of api usage in python
+```python
+from pathlib import Path
+import requests
+import pandas as pd
+
+api_key = "<your key>"
+api_id = "bktiz24e19"
+file_path = Path("<path to your input csv file>")
+elevation = 1000  # your point elevation in meters
+url = f"https://{api_id}.execute-api.us-west-2.amazonaws.com/m3works/snobal"
+params = {"elevation": elevation}
+
+output_file_name = file_path.name.replace('inputs', 'snobal')
+output_file = file_path.parent.joinpath(output_file_name)
+
+# Headers
+headers = {
+    "x-api-key": api_key,
+    "Content-Type": "text/csv"
+}
+
+print("Reading file and calling API")
+# Load the CSV file as binary data
+with open(str(file_path), "rb") as file:
+    response = requests.post(
+        url, headers=headers, params=params, data=file)
+
+print("API request finished")
+# error if we failed
+response.raise_for_status()
+
+result = response.json()
+
+print("Parsing results")
+# Get result into pandas
+df = pd.DataFrame.from_dict(result['results']["data"])
+```
+
+## Running locally
+### Script usage
+Use `scripts/use_api.py` to call the api from the command line
+
+```bash
+python3 scripts/use_api.py <path to your file>  \
+<your point elevation> --api_key <your api key>
+```
+
+This will output a csv file of the results.
+Run `python3 scripts/use_api.py --help` for a full list of options.
+
 ## Input files
 
 ### Variables that inform **snobal**
-These variables are directly used within iSnobal
+These variables are directly used within snobal
  * `air_temp` - modeled air temp at 2m above ground
- * `percent_snow` - % mix of snow vs rain (1 == all snow)
- * `precip` - precipitation mass
+ * `percent_snow` - % mix of snow vs rain (1 == all snow) [decimal percent]
+ * `precip` - precipitation mass [mm]
  * `precip_temp` - wet bulb temperature
- * `snow_density` - density of the NEW snow that hour
+ * `snow_density` - density of the NEW snow that hour [kg/m^3]
  * `vapor_pressure` - modeled vapor pressure
- * `wind_speed` - Wind speed at 5m above ground
+ * `wind_speed` - Wind speed at 5m above ground [m/s]
  * `soil_temp` - Average temperature of the soil column down to 30cm
- * `net_solar` - net solar into the snowpack
- * `thermal` - net longwave radiation into the snowpack
+ * `net_solar` - net solar into the snowpack [w/m^2]
+ * `thermal` - net longwave radiation into the snowpack [w/m^2]
 
 See `./tests/data/inputs_csl_2023.csv` for an example of data format
 
