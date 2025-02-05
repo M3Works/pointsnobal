@@ -10,10 +10,17 @@ This software takes in a csv of HOURLY input data and writes a csv of daily snow
 data.
 
 ## Research API
-M3 Works is honored to support research and educational modeling. 
-We maintain a free pointsnobal API for specific research and educational
-use. Reach out to us at [https://m3works.io/contact](https://m3works.io/contact)
-to request an API key and talk about your use case!
+🚀 Calling Snow Researchers & Students! 🚀
+
+At M3 Works, we’re passionate about advancing scientific research and education! 🌍📊
+
+That’s why we offer free access to our PointSnobal API for qualifying
+research and educational projects. Whether you’re modeling snow processes
+or exploring hydrology, we’re here to support your work!
+
+🔑 Request an API key on our website -> [https://m3works.io/contact](https://m3works.io/contact)
+
+Let’s collaborate and push the boundaries of environmental modeling together! ❄️📡
 
 ### Disclaimer
 This API is provided under the same license listed in this directory. The API
@@ -23,7 +30,7 @@ M3 Works LLC shall not be held liable for any direct, indirect, incidental, or c
 
 Use of this API constitutes acceptance of the terms and conditions outlined in the accompanying license.
 
-### Code usage
+### API usage
 Example of api usage in python
 ```python
 from pathlib import Path
@@ -63,6 +70,7 @@ print("Parsing results")
 df = pd.DataFrame.from_dict(result['results']["data"])
 ```
 
+## Running locally
 ### Script usage
 Use `scripts/use_api.py` to call the api from the command line
 
