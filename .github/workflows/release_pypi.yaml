@@ -17,7 +17,6 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]             # Target Linux and macOS
-        python-version: ["3.9", "3.10", "3.11"]       # Supported Python versions
         architecture: [x86_64, aarch64, arm64]         # Target architectures
         exclude:                                       # Exclude unsupported combinations
           - os: macos-latest
@@ -31,7 +30,14 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: '3.10'
+      - name: Install GCC (if needed)
+        if: runner.os == 'macOS'  # && matrix.architecture == 'arm64'
+        run: |
+          brew install gcc
+          export CC=/opt/homebrew/bin/gcc-14  # Adjust for actual version
+          export LDFLAGS="-L/opt/homebrew/opt/libomp/lib"
+          gcc --version
 
       - name: Install dependencies
         run: |
