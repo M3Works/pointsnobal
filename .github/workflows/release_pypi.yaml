@@ -40,7 +40,8 @@ jobs:
 
       - name: Build wheels with cibuildwheel
         run: |
-          cibuildwheel --platform ${{ matrix.os == 'ubuntu-latest' && 'linux' || 'macos' }} \
+          CIBW_BUILD="cp39-* cp310-* cp311-*" cibuildwheel \
+                       --platform ${{ matrix.os == 'ubuntu-latest' && 'linux' || 'macos' }} \
                        --arch ${{ matrix.architecture }} \
                        --output-dir wheelhouse
 
