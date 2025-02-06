@@ -33,12 +33,5 @@ jobs:
         run: |
           python3 setup.py build_ext --inplace
           python -m build --no-isolation
-      - name: Auditwheel Repair (Linux Only)
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          pip install auditwheel
-          auditwheel repair dist/*.whl -w wheelhouse/
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          packages-dir: wheelhouse/
