@@ -12,11 +12,9 @@ on:
 
 jobs:
   deploy:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ ubuntu-latest ]  #, macos-latest, windows-latest ]
-        python-version: ["3.10"]
+    runs-on: ubuntu-latest
+    container:
+      image: quay.io/pypa/manylinux_2_34_x86_64  # quay.io/pypa/manylinux_2_34_aarch64
     permissions:
       # IMPORTANT: this permission is mandatory for Trusted Publishing
       id-token: write
@@ -26,16 +24,26 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: '3.10'
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
           python3 -m pip install -r requirements.txt
           python3 -m pip install -r requirements_dev.txt
           pip install build
+          python -m pip install cibuildwheel==2.22.0
       - name: Build package
         run: |
           python3 setup.py build_ext --inplace
           python -m build --no-isolation
-      - name: Publish package distributions to PyPI
+
+      - name: Repair wheels (Linux)
+        run: |  # puts wheel in wheelhouse
+          python3 -m pip install auditwheel
+          auditwheel repair dist/pointsnobal*.whl  
+
+      # ✅ Upload to PyPI using Trusted Publishing
+      - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages: wheelhouse/*.whl
