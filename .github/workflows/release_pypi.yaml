@@ -1,105 +1,65 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# From: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
-
-name: Upload Python Package
+name: Build and Publish Wheels
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - "v*"  # Trigger on version tags (e.g., v1.0.0)
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
-  build-x86_64:
-    runs-on: ubuntu-latest
-    container:
-      image: quay.io/pypa/manylinux_2_34_x86_64
+  # ✅ Matrix Build Job for Linux and macOS
+  build:
+    runs-on: ${{ matrix.os }}
 
-    env:
-      PYTHON: /opt/python/cp310-cp310/bin/python  # ✅ Define the Python path once
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]             # Target Linux and macOS
+        python-version: ["3.9", "3.10", "3.11"]       # Supported Python versions
+        architecture: [x86_64, aarch64, arm64]         # Target architectures
+        exclude:                                       # Exclude unsupported combinations
+          - os: macos-latest
+            architecture: aarch64                      # macOS does not support aarch64
+          - os: ubuntu-latest
+            architecture: arm64                        # arm64 is macOS-only
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
         run: |
-          $PYTHON -m pip install --upgrade pip
-          $PYTHON -m pip install -r requirements.txt
-          $PYTHON -m pip install -r requirements_dev.txt
-          $PYTHON -m pip install build cibuildwheel==2.22.0
+          python -m pip install --upgrade pip
+          python -m pip install cibuildwheel
 
-      - name: Build package
+      - name: Build wheels with cibuildwheel
         run: |
-          $PYTHON setup.py build_ext --inplace
-          $PYTHON -m build --no-isolation
+          cibuildwheel --platform ${{ matrix.os == 'ubuntu-latest' && 'linux' || 'macos' }} \
+                       --arch ${{ matrix.architecture }} \
+                       --output-dir wheelhouse
 
-      - name: Repair wheels (Linux)
-        run: |
-          $PYTHON -m pip install auditwheel
-          auditwheel repair dist/pointsnobal*.whl -w wheelhouse/
-      # ✅ Upload wheels as GitHub artifact
       - name: Upload built wheels
         uses: actions/upload-artifact@v4
         with:
-          name: built-wheels-x86_64
+          name: wheels-${{ matrix.os }}-${{ matrix.architecture }}-py${{ matrix.python-version }}
           path: wheelhouse/*.whl
           retention-days: 2
 
-  build-aarch64:
-    runs-on: ubuntu-latest
-    container:
-      image: quay.io/pypa/manylinux_2_34_aarch64
-
-    env:
-      PYTHON: /opt/python/cp310-cp310/bin/python
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Install dependencies
-        run: |
-          $PYTHON -m pip install --upgrade pip
-          $PYTHON -m pip install -r requirements.txt
-          $PYTHON -m pip install -r requirements_dev.txt
-          $PYTHON -m pip install build cibuildwheel==2.22.0
-
-      - name: Build package (aarch64)
-        run: |
-          $PYTHON setup.py build_ext --inplace
-          $PYTHON -m build --no-isolation
-
-      - name: Repair wheels (aarch64)
-        run: |
-          $PYTHON -m pip install auditwheel
-          auditwheel repair dist/pointsnobal*.whl -w wheelhouse/
-
-      - name: Upload aarch64 wheels
-        uses: actions/upload-artifact@v4
-        with:
-          name: built-wheels-aarch64
-          path: wheelhouse/*.whl
-          retention-days: 2
-
-  # ✅ Step 2: Publish to PyPI (Outside the Container)
+  # ✅ Publish Job After All Builds Are Complete
   publish:
     runs-on: ubuntu-latest
-    needs: [ build-x86_64, build-aarch64 ]  # Wait for both builds
-    permissions:
-      # IMPORTANT: this permission is mandatory for Trusted Publishing
-      id-token: write
-      contents: read
-    steps:
-      - name: Download x86_64 wheels
-        uses: actions/download-artifact@v4
-        with:
-          name: built-wheels-x86_64
-          path: wheelhouse
+    needs: build  # Wait for all matrix builds to finish
 
-      - name: Download aarch64 wheels
+    steps:
+      - name: Download all built wheels
         uses: actions/download-artifact@v4
         with:
-          name: built-wheels-aarch64
           path: wheelhouse
 
       - name: Publish to PyPI
