@@ -40,10 +40,11 @@ jobs:
           auditwheel repair dist/pointsnobal*.whl -w wheelhouse/
       # ✅ Upload wheels as GitHub artifact
       - name: Upload built wheels
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: built-wheels
           path: wheelhouse/*.whl
+          retention-days: 2
 
 
 
@@ -54,7 +55,7 @@ jobs:
 
     steps:
       - name: Download built wheels
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: built-wheels
           path: wheelhouse
