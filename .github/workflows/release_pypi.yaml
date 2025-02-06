@@ -11,8 +11,7 @@ on:
     types: [published]
 
 jobs:
-
-  deploy:
+  build:
     runs-on: ubuntu-latest
     container:
       image: quay.io/pypa/manylinux_2_34_x86_64
@@ -39,6 +38,26 @@ jobs:
         run: |
           $PYTHON -m pip install auditwheel
           auditwheel repair dist/pointsnobal*.whl -w wheelhouse/
+      # ✅ Upload wheels as GitHub artifact
+      - name: Upload built wheels
+        uses: actions/upload-artifact@v3
+        with:
+          name: built-wheels
+          path: wheelhouse/*.whl
+
+
+
+  # ✅ Step 2: Publish to PyPI (Outside the Container)
+  publish:
+    runs-on: ubuntu-latest
+    needs: build  # Ensures this runs after the build job
+
+    steps:
+      - name: Download built wheels
+        uses: actions/download-artifact@v3
+        with:
+          name: built-wheels
+          path: wheelhouse
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
