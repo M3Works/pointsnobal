@@ -55,6 +55,11 @@ def main():
 
     print("API request finished")
     # error if we failed
+    if response.status_code == 403:
+        print(
+            "Authentication failure. Valid api key required. "
+            "Visit m3works.io/contact to request one."
+        )
     response.raise_for_status()
 
     result = response.json()
