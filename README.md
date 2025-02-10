@@ -9,7 +9,7 @@ which details iSnobal. This code was originally available in IPW.
 This software takes in a csv of HOURLY input data and writes a csv of daily snowpack
 data.
 
-<img src="./docs/eb.png" alt="Energy Balance Diagram" style="max-height: 200px;" />
+<img src="./docs/eb.png" alt="Energy Balance Diagram" style="max-height: 100px;" />
 
 ## Research API
 🚀 Calling Snow Researchers & Students! 🚀
