@@ -10,7 +10,7 @@ from pathlib import Path
 import pandas as pd
 import logging
 
-from point_model import run_model
+from .point_model import run_model
 
 
 LOG = logging.getLogger(__name__)
@@ -21,16 +21,16 @@ def main():
         description="CLI for running pointsnobal"
     )
     parser.add_argument(
-        "filepath", required=True,
+        "filepath",
         help="Path to input csv"
     )
     parser.add_argument(
-        "elevation", type="float",
-        required=True, help="Elevation of point in meters"
+        "elevation", type=float,
+        help="Elevation of point in meters"
     )
     parser.add_argument(
-        "--output_file", type="str", default=None,
-        required=False, help="Optional path to output file"
+        "--output_file", type=str, default=None,
+        help="Optional path to output file"
     )
     args = parser.parse_args()
 

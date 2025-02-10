@@ -24,18 +24,19 @@ test_requirements = [
 with open("./requirements.txt") as f:
     requirements = f.read().splitlines()
 
-# make sure we're using GCC
-if "CC" not in os.environ:
-    os.environ["CC"] = "gcc"
-
 if sys.platform == 'darwin':
     from distutils import sysconfig
+
+    # assume gcc libomp install with homebrew
+    os.environ.setdefault('CC', 'gcc-14')
+    os.environ.setdefault('LDFLAGS', '-L/opt/hombrew/Cellar/libomp/lib')
     vars = sysconfig.get_config_vars()
     vars['LDSHARED'] = vars['LDSHARED'].replace('-bundle', '-dynamiclib')
     extra_cc_args = [
         '-Xpreprocessor', '-fopenmp', '-lomp', '-O3', '-L./pointsnobal'
     ]
 else:
+    os.environ.setdefault('CC', 'gcc')
     extra_cc_args = ['-fopenmp', '-O3', '-L./pointsnobal']
 
 # ------------------------------------------------------------------------------
