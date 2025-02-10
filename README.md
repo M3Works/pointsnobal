@@ -1,12 +1,12 @@
 # PointSnobal
 
-Python wrapped implementation of the Snobal model applied at a point. 
+Python wrapped implementation of the Snobal model applied at a point.
 
 The code in `pointsnobal/c_snobal` is the same underlying algorithms described
 in [A spatially distributed energy balance snowmelt model for application in mountain basins (Marks 1999)]( https://doi.org/10.1002/(SICI)1099-1085(199909)13:12/13<1935::AID-HYP868>3.0.CO;2-C),
-which details iSnobal. This code was originally available in IPW. 
+which details Snobal. This code was originally available in IPW.
 
-This software takes in a csv of HOURLY input data and writes a csv of daily snowpack
+This software takes in a csv of **HOURLY** input data and writes a csv of daily snowpack
 data.
 
 ## Research API
@@ -74,7 +74,7 @@ df = pd.DataFrame.from_dict(result['results']["data"])
 ### Script usage
 Use `scripts/use_api.py` to call the api from the command line
 
-```bash
+```shell
 python3 scripts/use_api.py <path to your file>  \
 <your point elevation> --api_key <your api key>
 ```
@@ -84,8 +84,8 @@ Run `python3 scripts/use_api.py --help` for a full list of options.
 
 ## Input files
 
-### Variables that inform **snobal**
-These variables are directly used within snobal
+### Variables that inform **Snobal**
+These variables are directly used within Snobal
  * `air_temp` - modeled air temp at 2m above ground
  * `percent_snow` - % mix of snow vs rain (1 == all snow) [decimal percent]
  * `precip` - precipitation mass [mm]
@@ -99,71 +99,70 @@ These variables are directly used within snobal
 
 See `./tests/data/inputs_csl_2023.csv` for an example of data format
 
-## Height settings for **snobal**
+### Height settings for **Snobal**
  * wind height: 5m
  * air temp height: 2m
  * soil temp depth: 0.3m
 
-## Watch out for
- * Snobal expects temperatures to be in Kelvin. This code expects Celcius.
-  We do the conversion in `get_timestep_force`
- * Precip mass (`precip`) is a big driver here. Without accurate conditions,
-    model results will be poor
+> [!IMPORTANT]
+> Watch out for...
+> * Snobal expects temperatures to be in Kelvin. This code expects Celcius.
+>   We do the conversion in `get_timestep_force`
+> * Precip mass (`precip`) is a big driver here. Without accurate conditions,
+>   model results will be poor
 
-## PointSnobal script
-The entrypoint is `make_snow` once installed.
-Example:
-```bash
+
+## Local Install
+> [!TIP]
+> Creating a local virtual environment with your tool of choice is recommend to isolate your code
+> prior to installation.
+
+### Download Code
+Navigate to a directory where you would like to download the, for example a `projects` directory in your home, and
+clone the repository.
+
+```shell
+cd ~/projects
+git clone git@github.com:M3Works/pointsnobal.git
+cd pointsnobal
+```
+
+### Requirements
+
+
+Requirements can be found in `requirements.txt`.
+
+> [!NOTE]
+> A C-compiler with OpenMP support is required, on linux this is generally available. On macOS using [Homebrew](https://brew.sh/) is a simple option.
+> ```shell
+> brew install gcc libomp
+> ```
+
+For local build:
+```shell
+pip install -r requirements.txt
+python3 setup.py build_ext --inplace
+python3 install .
+```
+
+### PointSnobal script
+The entrypoint is `make_snow` once installed:
+
+```shell
 make_snow <path to input file> <elevation in meters>
 ```
 
-## Install
-
-### Requirements
-Requirements can be found in `requirements.txt`
-**NOTE** - GCC is required
-
-For local build: 
-Create a virtual environment to isolate the code
-```bash
-pip install -r requirements.txt
-python3 setup.py build_ext --inplace
-```
-
-### Install issues on mac
-If you're getting `'omp.h' file not found` on `setup.py install`
-
-This can fix that issue
+For example, the installation can be quickly verified by running the test problem.
 
 ```shell
-export CC=/usr/local/bin/gcc-14
-```
-for M1 or M2 mac this would be
-```shell
-export CC=/opt/homebrew/bin/gcc-14
-```
-This was *after* `brew install gcc` to get a version with openmp
-On M2 mac I also had to run `brew install libomp`
-
-Then I had the error `ld: library not found for -lomp` which I fixed with
-```
-export LDFLAGS="-L/usr/local/opt/libomp/lib"
+make_snow ./tests/data/inputs_csl_2023.csv 1000 --output_file test.csv
 ```
 
-for M1 and M2 this would be
-```shell
-export LDFLAGS="-L/opt/hombrew/Cellar/libomp/lib"
-```
-or
-```shell
-export LDFLAGS="-L/opt/homebrew/opt/libomp/lib"
-```
-depending on the path. You can find that path with `brew info libomp`
 
 ## Validation data
 Using [metloom](https://github.com/M3Works/metloom) for station data that
 can be used for validation. `get_daily_data` returns a GeoPandas DataFrame
-of the variables and units on a daily timestep. Validation is crucial in 
+of the variables and units on a daily timestep. Validation is crucial in
 snowpack modeling!
 
 ```python
@@ -196,3 +195,28 @@ print(df)
 df.to_csv(f"{point.id}_station_data.csv", index_label="datetime")
 
 ```
+
+## Troubleshoting
+
+### Install issues on macOS
+If you are getting `'omp.h' file not found` or `ld: library not found for -lomp` during the
+`setup.py build_ext` step you need to be sure that the correct compiler is being utilized and the OpenMP libraries are available.
+
+First, set the `CC` environment variable to your C-compiler. For example, the following
+is are the paths used on macOS when using homebrew.
+
+```shell
+export CC=/usr/local/bin/gcc-14 # Intel
+export CC=/opt/homebrew/bin/gcc-14 # Apple silicon
+```
+
+Second, be sure the OpenMP libraries are available to the compiler. This can
+be accomplished by setting the `LDFLAGS` envornment variable. For example, for
+`libomp` install with homebrew.
+
+```shell
+export LDFLAGS="-L/opt/homebrew/opt/libomp/lib" # Intel
+export LDFLAGS="-L/opt/hombrew/Cellar/libomp/lib" # Apple silicon
+```
+
+For additional help on these path, when using homebrew, utilize the `brew info gcc` and `brew info libomp`commands.
