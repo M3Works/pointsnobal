@@ -5,7 +5,7 @@ on:
     types: [published]
 
 jobs:
-  build-x86_64:
+  build:
     runs-on: ubuntu-latest
     container:
       image: quay.io/pypa/manylinux_2_34_x86_64
@@ -36,63 +36,25 @@ jobs:
       - name: Upload built wheels
         uses: actions/upload-artifact@v4
         with:
-          name: built-wheels-x86_64
+          name: built-wheels
           path: wheelhouse/*.whl
           retention-days: 2
 
-  build-aarch64:
-    runs-on: ubuntu-latest
-    container:
-      image: quay.io/pypa/manylinux_2_34_aarch64
 
-    env:
-      PYTHON: /opt/python/cp310-cp310/bin/python
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Install dependencies
-        run: |
-          $PYTHON -m pip install --upgrade pip
-          $PYTHON -m pip install -r requirements.txt
-          $PYTHON -m pip install -r requirements_dev.txt
-
-      - name: Build package (aarch64)
-        run: |
-          $PYTHON setup.py build_ext --inplace
-          $PYTHON -m build --no-isolation
-
-      - name: Repair wheels (aarch64)
-        run: |
-          $PYTHON -m pip install auditwheel
-          auditwheel repair dist/pointsnobal*.whl -w wheelhouse/
-
-      - name: Upload aarch64 wheels
-        uses: actions/upload-artifact@v4
-        with:
-          name: built-wheels-aarch64
-          path: wheelhouse/*.whl
-          retention-days: 2
 
   # ✅ Step 2: Publish to PyPI (Outside the Container)
   publish:
     runs-on: ubuntu-latest
-    needs: [ build-x86_64, build-aarch64 ]  # Wait for both builds
+    needs: build  # Ensures this runs after the build job
     permissions:
       # IMPORTANT: this permission is mandatory for Trusted Publishing
       id-token: write
       contents: read
     steps:
-      - name: Download x86_64 wheels
+      - name: Download built wheels
         uses: actions/download-artifact@v4
         with:
-          name: built-wheels-x86_64
-          path: wheelhouse
-
-      - name: Download aarch64 wheels
-        uses: actions/download-artifact@v4
-        with:
-          name: built-wheels-aarch64
+          name: built-wheels
           path: wheelhouse
 
       - name: Publish to PyPI
