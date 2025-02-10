@@ -1,4 +1,5 @@
 # PointSnobal
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14814813.svg)](https://zenodo.org/records/14814813)
 
 Python wrapped implementation of the Snobal model applied at a point. 
 
@@ -23,6 +24,13 @@ or exploring hydrology, we’re here to support your work!
 🔑 Request an API key on our website -> [https://m3works.io/contact](https://m3works.io/contact)
 
 Let’s collaborate and push the boundaries of environmental modeling together! ❄️📡
+
+### Credit
+If you use the pointsnobal API we ask that you credit M3Works. To cite, please use the following 
+DOI:
+
+https://zenodo.org/records/14814813
+
 
 ### Disclaimer
 This API is provided under the same license listed in this directory. The API
