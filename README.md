@@ -104,8 +104,8 @@ These variables are directly used within Snobal
  * `vapor_pressure` - modeled vapor pressure
  * `wind_speed` - Wind speed at 5m above ground [m/s]
  * `soil_temp` - Average temperature of the soil column down to 30cm
- * `net_solar` - net solar into the snowpack [w/m^2]
- * `thermal` - net longwave radiation into the snowpack [w/m^2]
+ * `net_solar` - Net solar into the snowpack [w/m^2]
+ * `thermal` - Incoming longwave radiation into the snowpack [w/m^2]
 
 See `./tests/data/inputs_csl_2023.csv` for an example of data format
 
@@ -116,7 +116,7 @@ See `./tests/data/inputs_csl_2023.csv` for an example of data format
 
 > [!IMPORTANT]
 > Watch out for...
-> * Snobal expects temperatures to be in Kelvin. This code expects Celcius.
+> * Snobal expects temperatures to be in Kelvin. This code expects Celsius.
 >   We do the conversion in `get_timestep_force`
 > * Precip mass (`precip`) is a big driver here. Without accurate conditions,
 >   model results will be poor
@@ -124,11 +124,11 @@ See `./tests/data/inputs_csl_2023.csv` for an example of data format
 
 ## Local Install
 > [!TIP]
-> Creating a local virtual environment with your tool of choice is recommend to isolate your code
+> Creating a local virtual environment with your tool of choice is recommended to isolate your code
 > prior to installation.
 
 ### Download Code
-Navigate to a directory where you would like to download the, for example a `projects` directory in your home, and
+Navigate to a directory where you would like to download the repo, for example a `projects` directory in your home, and
 clone the repository.
 
 ```shell
@@ -165,7 +165,7 @@ make_snow <path to input file> <elevation in meters>
 For example, the installation can be quickly verified by running the test problem.
 
 ```shell
-make_snow ./tests/data/inputs_csl_2023.csv 1000 --output_file test.csv
+make_snow ./tests/data/inputs_csl_2023.csv 2101 --output_file test.csv
 ```
 
 
