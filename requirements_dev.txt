@@ -1,5 +1,5 @@
 bump2version==0.5.11
-wheel==0.38.1
+wheel==0.46.2
 coverage==5.5
 Sphinx==1.8.5
 twine==1.14.0
