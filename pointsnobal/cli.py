@@ -36,6 +36,18 @@ def main():
         "--output_frequency", type=int, default=24,
         help="Output frequency in hours"
     )
+    parser.add_argument(
+        "--z_u", type=float, default=5.0,
+        help="Wind speed measurement height in meters (default 5.0)"
+    )
+    parser.add_argument(
+        "--z_t", type=float, default=2.0,
+        help="Air temperature measurement height in meters (default 2.0)"
+    )
+    parser.add_argument(
+        "--z_g", type=float, default=0.3,
+        help="Soil temperature depth in meters (default 0.3)"
+    )
     args = parser.parse_args()
 
     LOG.info(f"Reading in {args.filepath}")
@@ -49,7 +61,9 @@ def main():
     # Run the model for that file
     LOG.info(f"Running pointsnobal...")
     df_out = run_model(
-        args.elevation, df_inputs, output_frequency_hours=args.output_frequency
+        args.elevation, df_inputs,
+        z_u=args.z_u, z_t=args.z_t, z_g=args.z_g,
+        output_frequency_hours=args.output_frequency
     )
     LOG.info(f"Finished pointsnobal, outputting to {output_file}")
     df_out.to_csv(output_file)
