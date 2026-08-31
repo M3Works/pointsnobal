@@ -272,7 +272,8 @@ def do_tstep_grid(input1, input2, output_rec, tstep_rec, mh, params, int first_s
             tstep_info[i].intervals = int(tstep_rec[i]['intervals'])
         if tstep_rec[i]['threshold'] is not None:
             tstep_info[i].threshold = tstep_rec[i]['threshold']
-        tstep_info[i].output = int(tstep_rec[i]['output'])
+        # NOTE: the 'output' flag is intentionally not read; snobal's built-in
+        # output paths are disabled here and outputting is driven from Python.
 
     # start1 = clock()
     cdef OUTPUT_REC_ARR output1_c
@@ -649,7 +650,8 @@ def do_tstep(input1, input2, output_rec, tstep_rec, mh, params, first_step=True)
             tstep_info[i].intervals = int(tstep_rec[i]['intervals'])
         if tstep_rec[i]['threshold'] is not None:
             tstep_info[i].threshold = tstep_rec[i]['threshold']
-        tstep_info[i].output = int(tstep_rec[i]['output'])
+        # NOTE: the 'output' flag is intentionally not read; snobal's built-in
+        # output paths are disabled here and outputting is driven from Python.
 
 
 

@@ -32,6 +32,10 @@ def main():
         "--output_file", type=str, default=None,
         help="Optional path to output file"
     )
+    parser.add_argument(
+        "--output_frequency", type=int, default=24,
+        help="Output frequency in hours"
+    )
     args = parser.parse_args()
 
     LOG.info(f"Reading in {args.filepath}")
@@ -39,16 +43,13 @@ def main():
         args.filepath,
         parse_dates=["datetime"], index_col="datetime"
     )
-    # Start and end dates
-    start_date = df_inputs.index.min()
-    end_date = df_inputs.index.max()
 
     output_file = args.output_file or "./pointsnobal_results.csv"
 
     # Run the model for that file
     LOG.info(f"Running pointsnobal...")
     df_out = run_model(
-        start_date, end_date, args.elevation, df_inputs
+        args.elevation, df_inputs, output_frequency_hours=args.output_frequency
     )
     LOG.info(f"Finished pointsnobal, outputting to {output_file}")
     df_out.to_csv(output_file)
