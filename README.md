@@ -12,6 +12,14 @@ data.
 
 <img src="./docs/eb.png" alt="Energy Balance Diagram" style="max-height: 100px;" />
 
+## Versions
+
+PointSnobal ships in versioned lines:
+
+| Version | Description |
+| --- | --- |
+| `v0.1.x` | The legacy USDA ARS Snobal, maintained to build and run on modern systems. |
+
 ## Research API
 🚀 Calling Snow Researchers & Students! 🚀
 
@@ -50,9 +58,18 @@ import pandas as pd
 api_key = "<your key>"
 api_id = "bktiz24e19"
 file_path = Path("<path to your input csv file>")
-elevation = 1000  # your point elevation in meters
+elevation = 1000  # your point elevation in meters (REQUIRED)
 url = f"https://{api_id}.execute-api.us-west-2.amazonaws.com/m3works/snobal"
-params = {"elevation": elevation}
+# Query parameters. Only `elevation` is required; the others are optional and
+# shown here at their defaults. z_u / z_t / z_g are measurement heights in
+# meters, relative to the snow surface.
+params = {
+    "elevation": elevation,       # REQUIRED - point elevation (m)
+    "z_u": 5.0,                   # wind speed measurement height (m)
+    "z_t": 2.0,                   # air temperature measurement height (m)
+    "z_g": 0.3,                   # soil temperature depth (m)
+    "output_frequency": "daily",  # "daily" (one row per day) or "hourly"
+}
 
 output_file_name = file_path.name.replace('inputs', 'snobal')
 output_file = file_path.parent.joinpath(output_file_name)
@@ -109,10 +126,14 @@ These variables are directly used within Snobal
 
 See `./tests/data/inputs_csl_2023.csv` for an example of data format
 
-### Height settings for **Snobal**
- * wind height: 5m
- * air temp height: 2m
- * soil temp depth: 0.3m
+### Measurement heights
+Heights are relative to the snow surface and default to the values below.
+Override them per run with the `z_u` / `z_t` / `z_g` parameters — as API query
+parameters (above), or on the CLI with `make_snow --z_u/--z_t/--z_g`.
+
+ * `z_u` — wind speed measurement height (default 5 m)
+ * `z_t` — air temperature measurement height (default 2 m)
+ * `z_g` — soil temperature depth (default 0.3 m)
 
 > [!IMPORTANT]
 > Watch out for...

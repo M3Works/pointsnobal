@@ -1,0 +1,33 @@
+{
+    "title": "pointsnobal",
+    "description": "Python wrapped implementation of the Snobal model applied at a point, provided by M3 Works.",
+    "upload_type": "software",
+    "license": "bsd-3-clause",
+    "version": "0.1.1",
+    "access_right": "open",
+    "keywords": [
+        "snobal",
+        "isnobal",
+        "snow modeling",
+        "water resources",
+        "snowpack",
+        "hydrology",
+        "energy balance",
+        "water supply forecasting"
+    ],
+    "creators": [
+        {
+            "name": "M3 Works LLC"
+        },
+        {
+            "name": "Sandusky, Micah",
+            "affiliation": "M3Works",
+            "orcid": "0000-0002-4235-5876"
+        },
+        {
+            "name": "Johnson, Micah",
+            "affiliation": "M3Works",
+            "orcid": "0000-0003-4029-8545"
+        }
+    ]
+}
