@@ -46,11 +46,17 @@ SNOW_OUT = {'thickness': 'z_s', 'snow_density': 'rho',
 
 def initialize_model(
         model_datetimes: pd.DatetimeIndex, elevation: float,
+        z_u: float = 5.0, z_t: float = 2.0, z_g: float = 0.3,
 ):
     """
     Args:
         model_datetimes: datetime index from the forcing data
         elevation: elevation in meters
+        z_u: wind speed measurement height in meters (relative to the snow
+            surface)
+        z_t: air temperature measurement height in meters (relative to the
+            snow surface)
+        z_g: soil temperature depth in meters
 
     Returns:
         output_record: output dictionary for start (mostly 0.0s)
@@ -61,37 +67,49 @@ def initialize_model(
     # initialize isnobal state
     LOG.info('Initializing snobal Model')
     freq = pd.infer_freq(model_datetimes)
-    # Convert to offset and calculate number of minutes
+    if freq is None:
+        raise ValueError(
+            "Could not infer a regular frequency from the input datetime "
+            "index. pointsnobal requires evenly-spaced input data."
+        )
+    # Seconds between input records (the data timestep)
     offset = pd.tseries.frequencies.to_offset(freq)
+    data_tstep = pd.Timedelta(offset).total_seconds()
+    # The normal/medium/small sub-timestep hierarchy below assumes the data
+    # step is a whole number of hours: the normal step is one hour and is run
+    # once per hour of the data step. Reject anything that would not divide
+    # cleanly rather than silently under-integrating the timestep.
+    if data_tstep % 3600 != 0:
+        raise ValueError(
+            "pointsnobal requires input data on a whole-hour timestep, got "
+            f"{data_tstep / 3600.0:.4g} hours between records."
+        )
+    normal_intervals = int(data_tstep // 3600)
+
+    # Only the keys consumed by the C layer (via the PARAMS struct) are kept
     constants = {
-            'time_step': offset.n * 60,
             'max_h2o_vol': 0.01,
-            'c': True,
-            'K': True,
-            'mass_threshold': 60,
-            'time_z': 0,
             'max_z_s_0': 0.25,
-            'z_u': 5.0,
-            'z_t': 2.0,
-            'z_g': 0.3,
+            'z_u': z_u,
+            'z_t': z_t,
+            'z_g': z_g,
             'relative_heights': True,
-            'max_density': 550,
-            'max_compact_density': 500,
-            'max_liquid_density': 500,
         }
 
-    # get the timestep info
+    # get the timestep info. Each data step is run as `normal_intervals`
+    # one-hour normal steps, which are adaptively subdivided into medium
+    # (15 min) and small (1 min) steps when the pack mass is below threshold.
     tstep_info = [
         {
-            'level': 0, 'output': 2, 'threshold': None,
-            'time_step': offset.n * 3600.0,  # Datatstep in seconds
+            'level': 0, 'threshold': None,
+            'time_step': data_tstep,  # data timestep in seconds
             'intervals': None
         },
-        {'level': 1, 'output': False, 'threshold': 60.0, 'time_step': 3600.0,
-        'intervals': 1},
-        {'level': 2, 'output': False, 'threshold': 10.0, 'time_step': 900.0,
+        {'level': 1, 'threshold': 60.0, 'time_step': 3600.0,
+        'intervals': normal_intervals},
+        {'level': 2, 'threshold': 10.0, 'time_step': 900.0,
         'intervals': 4},
-        {'level': 3, 'output': False, 'threshold': 1.0, 'time_step': 60.0,
+        {'level': 3, 'threshold': 1.0, 'time_step': 60.0,
         'intervals': 15}
     ]
     # get init params
@@ -185,27 +203,34 @@ def save_timsteps(
 
 
 def run_model(
-        start: pd.Timestamp, end: pd.Timestamp, elevation: float,
-        df_inputs: pd.DataFrame
+        elevation: float,
+        df_inputs: pd.DataFrame,
+        z_u: float = 5.0, z_t: float = 2.0, z_g: float = 0.3,
+        output_frequency_hours: int = 24,
 ) -> pd.DataFrame:
     """
     Run snobal with given input data
     Args:
-        start: start date
-        end: end date
         elevation: elevation in meters for the point
         df_inputs: hourly input pd.Dataframe
+        z_u: wind speed measurement height in meters (relative to the snow
+            surface)
+        z_t: air temperature measurement height in meters (relative to the
+            snow surface)
+        z_g: soil temperature depth in meters
+        output_frequency_hours: how often (in hours) to record an output row.
+            Defaults to 24 (daily). Use 1 for hourly output. Accumulated
+            outputs (e.g. SWI) are summed over each output interval, so at
+            hourly output they represent hourly totals rather than daily.
 
     Returns:
-        Dataframe of daily outputs indexed on datetime
+        Dataframe of outputs indexed on datetime
     """
-    # Returns '=1H'
-    frequency = pd.infer_freq(df_inputs.index)
     # Variable for storing the outputs
     output_list = []
     # Get the variables for snobal
     output_record, tstep_info, constants, model_datetimes = initialize_model(
-        df_inputs.index, elevation)
+        df_inputs.index, elevation, z_u=z_u, z_t=z_t, z_g=z_g)
 
     # Tracking how often we output
     output_record['current_time'] = 1.0 * np.zeros(
@@ -244,8 +269,8 @@ def run_model(
         # copy the second inputs to now be the starting inputs
         input1 = copy.deepcopy(input2)
 
-        # output at the frequency and the last time step
-        if (j * (data_tstep / 3600.0) % 24 == 0) \
+        # output at the requested frequency and the last time step
+        if (j * (data_tstep / 3600.0) % output_frequency_hours == 0) \
                 or (j == len(model_datetimes) - 1):
             LOG.debug('Outputting {}'.format(tstep))
 
