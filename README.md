@@ -1,5 +1,5 @@
 # PointSnobal
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14814813.svg)](https://zenodo.org/records/14814813)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22216123.svg)](https://zenodo.org/records/22216123)
 
 Python wrapped implementation of the Snobal model applied at a point.
 
