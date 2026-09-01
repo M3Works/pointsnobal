@@ -37,7 +37,7 @@ Let’s collaborate and push the boundaries of environmental modeling together! 
 If you use the pointsnobal API we ask that you credit M3Works. To cite, please use the following 
 DOI:
 
-https://zenodo.org/records/14814813
+https://zenodo.org/records/22216123
 
 
 ### Disclaimer
